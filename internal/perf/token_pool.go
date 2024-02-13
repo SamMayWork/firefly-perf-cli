@@ -17,8 +17,8 @@
 package perf
 
 import (
+	"fmt"
 	"errors"
-	"net/url"
 
 	"github.com/hyperledger/firefly-common/pkg/fftypes"
 	"github.com/hyperledger/firefly/pkg/core"
@@ -43,10 +43,8 @@ func (pr *perfRunner) CreateTokenPool() error {
 	if pr.cfg.TokenOptions.Config.PoolBlockNumber != "" {
 		config["blockNumber"] = pr.cfg.TokenOptions.Config.PoolBlockNumber
 	}
-	fullPath, err := url.JoinPath(pr.client.BaseURL, pr.cfg.FFNamespacePath, "tokens/pools?confirm=true")
-	if err != nil {
-		return err
-	}
+	fullPath := fmt.Sprintf("%s/%s/tokens/pools?confirm=true&publish=true", pr.client.BaseURL, pr.cfg.FFNamespacePath)
+	fmt.Printf("Full Path is: %s\n", fullPath)
 	res, err := pr.client.R().
 		SetBody(&body).
 		Post(fullPath)
