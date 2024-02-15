@@ -207,6 +207,8 @@ func New(config *conf.RunnerConfig, reportBuilder *util.Report) PerfRunner {
 	wsUUID := *fftypes.NewUUID()
 	ctx, cancel := context.WithCancel(context.Background())
 
+	fmt.Println("Registering counters!")
+
 	prometheus.Register(delinquentMsgsCounter)
 	prometheus.Register(sentMintsCounter)
 	prometheus.Register(sentMintErrorCounter)
