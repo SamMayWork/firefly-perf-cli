@@ -209,14 +209,14 @@ func New(config *conf.RunnerConfig, reportBuilder *util.Report) PerfRunner {
 
 	fmt.Println("Registering counters!")
 
-	prometheus.Register(delinquentMsgsCounter)
-	prometheus.Register(sentMintsCounter)
-	prometheus.Register(sentMintErrorCounter)
-	prometheus.Register(mintBalanceGauge)
-	prometheus.Register(receivedEventsCounter)
-	prometheus.Register(incompleteEventsCounter)
-	prometheus.Register(totalActionsCounter)
-	prometheus.Register(perfTestDurationHistogram)
+	prometheus.MustRegister(delinquentMsgsCounter)
+	prometheus.MustRegister(sentMintsCounter)
+	prometheus.MustRegister(sentMintErrorCounter)
+	prometheus.MustRegister(mintBalanceGauge)
+	prometheus.MustRegister(receivedEventsCounter)
+	prometheus.MustRegister(incompleteEventsCounter)
+	prometheus.MustRegister(totalActionsCounter)
+	prometheus.MustRegister(perfTestDurationHistogram)
 
 	startRampTime := time.Now().Unix()
 	endRampTime := time.Now().Unix() + int64(config.RampLength.Seconds())
