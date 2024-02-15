@@ -1,4 +1,4 @@
-// Copyright © 2022 Kaleido, Inc.
+// Copyright © 2024 Kaleido, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -40,13 +40,10 @@ import (
 	"github.com/hyperledger/firefly/pkg/core"
 	dto "github.com/prometheus/client_model/go"
 	log "github.com/sirupsen/logrus"
-	"golang.org/x/time/rate"
 )
 
 var mutex = &sync.Mutex{}
-var limiter *rate.Limiter
 var TRANSPORT_TYPE = "websockets"
-var wsReadAhead = uint16(50)
 
 var METRICS_NAMESPACE = "ffperf"
 var METRICS_SUBSYSTEM = "runner"
@@ -99,17 +96,6 @@ var perfTestDurationHistogram = prometheus.NewHistogramVec(prometheus.HistogramO
 	Name:      "perf_test_duration_seconds",
 	Buckets:   []float64{1.0, 2.0, 5.0, 10.0, 30.0},
 }, []string{"test"})
-
-func Init() {
-	prometheus.Register(delinquentMsgsCounter)
-	prometheus.Register(sentMintsCounter)
-	prometheus.Register(sentMintErrorCounter)
-	prometheus.Register(mintBalanceGauge)
-	prometheus.Register(receivedEventsCounter)
-	prometheus.Register(incompleteEventsCounter)
-	prometheus.Register(totalActionsCounter)
-	prometheus.Register(perfTestDurationHistogram)
-}
 
 func getMetricVal(collector prometheus.Collector) float64 {
 	collectorChannel := make(chan prometheus.Metric, 1)
@@ -220,6 +206,15 @@ func New(config *conf.RunnerConfig, reportBuilder *util.Report) PerfRunner {
 
 	wsUUID := *fftypes.NewUUID()
 	ctx, cancel := context.WithCancel(context.Background())
+
+	prometheus.Register(delinquentMsgsCounter)
+	prometheus.Register(sentMintsCounter)
+	prometheus.Register(sentMintErrorCounter)
+	prometheus.Register(mintBalanceGauge)
+	prometheus.Register(receivedEventsCounter)
+	prometheus.Register(incompleteEventsCounter)
+	prometheus.Register(totalActionsCounter)
+	prometheus.Register(perfTestDurationHistogram)
 
 	startRampTime := time.Now().Unix()
 	endRampTime := time.Now().Unix() + int64(config.RampLength.Seconds())
